@@ -11,7 +11,6 @@ public enum ModeCode { NOTHING, CONTINUE, EDIT }
 /// Main entry point of the program
 /// </summary>
 public class Program {
-
   public static Dictionary<string, float> _menu =
       new Dictionary<string, float> {
         { "Burger", 5.99f },
@@ -29,7 +28,6 @@ public class Program {
       };
 
   public static void Main(string[] args) {
-
     Order order = new Order(_menu);
     ModeCode mode;
 
@@ -46,20 +44,20 @@ public class Program {
 
       // user have the decision to edit the order
       (mode, order) = summary(order);
-
       if (mode == ModeCode.EDIT)
         continue;
-
       if (mode == ModeCode.CONTINUE)
         break;
     }
 
     Console.Clear();
-
     order.displaySummary();
-
     Console.WriteLine("\nOrder submitted!");
     Console.WriteLine("Thank you for your order!\n");
+    handleSaveOrder(order);
+  }
+
+  private static void handleSaveOrder(Order order) {
     Console.Write("Save to file? y/yes or press any key to exit: ");
     string input = Console.ReadLine().ToLower();
     if (input == "y" || input == "yes") {
@@ -80,17 +78,15 @@ public class Program {
   private static (ModeCode, Order) edit(Order order) {
     while (true) {
       Console.Clear();
-
       displayTitle();
       order.displayMenu();
-      order.calculateSubtotal();
+
       Console.WriteLine("");
+      order.calculateSubtotal();
       order.displaySubtotal();
 
       displayEditInstructions();
-
-      ModeCode mode = getOrderInput(order);
-
+      ModeCode mode = getEditInput(order);
       if (mode != ModeCode.NOTHING)
         return (mode, order);
     }
@@ -109,10 +105,13 @@ public class Program {
       case ConsoleKey.Q:
         Environment.Exit(0);
         break;
+
       case ConsoleKey.E:
         return (ModeCode.EDIT, order);
+
       case ConsoleKey.Enter:
         return (ModeCode.CONTINUE, order);
+
       case ConsoleKey.C:
         Console.Write("Enter coupon code: ");
         order.applyCoupon(Console.ReadLine(), _coupons);
@@ -129,7 +128,7 @@ public class Program {
     Console.ResetColor();
 
     Console.WriteLine("digital ordering system!\n");
-  } // displayTitle
+  } 
 
   private static void displayEditInstructions() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -144,10 +143,9 @@ public class Program {
     Console.WriteLine("e (edit)             c (apply coupon)" +
                       "\nenter (continue)     q (quit)\n");
     Console.ResetColor();
-
   }
 
-  private static ModeCode getOrderInput(Order order) {
+  private static ModeCode getEditInput(Order order) {
     ConsoleKeyInfo key = Console.ReadKey(true);
     switch (key.Key) {
     case ConsoleKey.DownArrow:
