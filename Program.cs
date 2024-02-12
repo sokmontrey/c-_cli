@@ -75,7 +75,7 @@ public class Program {
       }
       order.saveToFile(file_name);
     }
-  } // Main
+  }
 
   private static (ModeCode, Order) edit(Order order) {
     while (true) {
@@ -94,7 +94,7 @@ public class Program {
       if (mode != ModeCode.NOTHING)
         return (mode, order);
     }
-  } // edit
+  } 
 
   private static (ModeCode, Order) summary(Order order) {
     while (true) {
@@ -119,7 +119,7 @@ public class Program {
         break;
       }
     }
-  } // summary
+  }
 
   private static void displayTitle() {
     Console.Write("\nWelcome to the");
@@ -137,7 +137,7 @@ public class Program {
                       "\n  →/l   (add)        ←/h (remove)" +
                       "\n  enter (continue)     q (quit)\n");
     Console.ResetColor();
-  } // displayEditInstructions
+  }
 
   private static void displaySummaryInstructions() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -145,7 +145,7 @@ public class Program {
                       "\nenter (continue)     q (quit)\n");
     Console.ResetColor();
 
-  } // displaySummaryInstructions
+  }
 
   private static ModeCode getOrderInput(Order order) {
     ConsoleKeyInfo key = Console.ReadKey(true);
@@ -177,7 +177,7 @@ public class Program {
       return ModeCode.CONTINUE;
     }
     return ModeCode.NOTHING;
-  } // getOrderInput
+  }
 
 } // class Program
 
