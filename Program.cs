@@ -5,65 +5,147 @@ namespace OrderSystem {
 /// <summary>
 /// Enum codes for after handle user input.
 /// </summary>
-public enum ModeCode { NOTHING, CONTINUE, EXIT }
+public enum ModeCode { NOTHING, CONTINUE, EDIT }
 
 /// <summary>
 /// Main entry point of the program
 /// </summary>
 public class Program {
-  private Dictionary<string, float> _coupons = new Dictionary<string, float> {
-    { "10OFF", 0.10f },
-    { "20OFF", 0.20f },
-    { "30OFF", 0.30f },
-  };
 
-  private float _tax_rate = 0.13f;
+  public static Dictionary<string, float> _menu =
+      new Dictionary<string, float> {
+        { "Burger", 5.99f },
+        { "Fries", 2.99f },
+        { "Drink", 1.99f },
+      };
+
+  public static float _tax_rate = 0.13f;
+
+  public static Dictionary<string, float> _coupons =
+      new Dictionary<string, float> {
+        { "10OFF", 0.10f },
+        { "20OFF", 0.20f },
+        { "30OFF", 0.30f },
+      };
 
   public static void Main(string[] args) {
-    Order order = new Order(new Dictionary<string, float> {
-      { "Burger", 5.99f },
-      { "Fries", 2.99f },
-      { "Drink", 1.99f },
-    });
 
+    Order order = new Order(_menu);
+    ModeCode mode;
+
+    while (true) {
+      (mode, order) = edit(order);
+
+      // user can't continue with an empty order
+      if (order.calculateSubtotal() == 0) {
+        Console.WriteLine("Order is empty. Please add items to the order.");
+        Console.Write("Press any key to continue...");
+        Console.ReadKey(true);
+        continue;
+      }
+
+      // user have the decision to edit the order
+      (mode, order) = summary(order);
+
+      if (mode == ModeCode.EDIT)
+        continue;
+
+      if (mode == ModeCode.CONTINUE)
+        break;
+    }
+
+    Console.Clear();
+
+    order.displaySummary();
+
+    Console.WriteLine("\nOrder submitted!");
+    Console.WriteLine("Thank you for your order!\n");
+    Console.Write("Save to file? y/yes or press any key to exit: ");
+    string input = Console.ReadLine().ToLower();
+    if (input == "y" || input == "yes") {
+      Console.Write("Enter file name: ");
+      string file_name = Console.ReadLine();
+      while (file_name == "") {
+        Console.Write("File name can't be empty. Enter another file name: ");
+        file_name = Console.ReadLine();
+      }
+      while (File.Exists(file_name + ".txt")) {
+        Console.Write("File already exists. Enter another file name: ");
+        file_name = Console.ReadLine();
+      }
+      order.saveToFile(file_name);
+    }
+  } // Main
+
+  private static (ModeCode, Order) edit(Order order) {
     while (true) {
       Console.Clear();
 
       displayTitle();
-      displayInstructions();
-
       order.displayMenu();
       order.calculateSubtotal();
-      order.displaySummary();
+      Console.WriteLine("");
+      order.displaySubtotal();
+
+      displayEditInstructions();
 
       ModeCode mode = getOrderInput(order);
-      switch(mode){
-      case ModeCode.EXIT:
-        return;
-      case ModeCode.CONTINUE:
+
+      if (mode != ModeCode.NOTHING)
+        return (mode, order);
+    }
+  } // edit
+
+  private static (ModeCode, Order) summary(Order order) {
+    while (true) {
+      order.calculateTax(_tax_rate);
+      order.displaySummary();
+
+      Console.WriteLine("");
+      displaySummaryInstructions();
+
+      ConsoleKeyInfo key = Console.ReadKey(true);
+      switch (key.Key) {
+      case ConsoleKey.Q:
+        Environment.Exit(0);
+        break;
+      case ConsoleKey.E:
+        return (ModeCode.EDIT, order);
+      case ConsoleKey.Enter:
+        return (ModeCode.CONTINUE, order);
+      case ConsoleKey.C:
+        Console.Write("Enter coupon code: ");
+        order.applyCoupon(Console.ReadLine(), _coupons);
         break;
       }
     }
-  } // Main
+  } // summary
 
   private static void displayTitle() {
-    Console.Write("Welcome to the");
+    Console.Write("\nWelcome to the");
 
     Console.ForegroundColor = ConsoleColor.Blue;
     Console.Write(" par la rivière ");
     Console.ResetColor();
 
-    Console.Write("digital ordering system!");
-  }
+    Console.WriteLine("digital ordering system!\n");
+  } // displayTitle
 
-  private static void displayInstructions() {
+  private static void displayEditInstructions() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
-    Console.WriteLine("");
     Console.WriteLine("\n  ↓/j   (down)       ↑/k (up)" +
                       "\n  →/l   (add)        ←/h (remove)" +
                       "\n  enter (continue)     q (quit)\n");
     Console.ResetColor();
-  }
+  } // displayEditInstructions
+
+  private static void displaySummaryInstructions() {
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine("e (edit)             c (apply coupon)" +
+                      "\nenter (continue)     q (quit)\n");
+    Console.ResetColor();
+
+  } // displaySummaryInstructions
 
   private static ModeCode getOrderInput(Order order) {
     ConsoleKeyInfo key = Console.ReadKey(true);
@@ -89,13 +171,13 @@ public class Program {
       break;
 
     case ConsoleKey.Q:
-      return ModeCode.EXIT;
-
+      Environment.Exit(0);
+      break;
     case ConsoleKey.Enter:
       return ModeCode.CONTINUE;
     }
     return ModeCode.NOTHING;
-  }
+  } // getOrderInput
 
 } // class Program
 
