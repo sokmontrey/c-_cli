@@ -32,10 +32,10 @@ public class Program {
     ModeCode mode;
 
     while (true) {
-      (mode, order) = edit(order);
+      mode = Edit(order);
 
       // user can't continue with an empty order
-      if (order.calculateSubtotal() == 0) {
+      if (order.CalculateSubtotal() == 0) {
         Console.WriteLine("Order is empty. Please add items to the order.");
         Console.Write("Press any key to continue...");
         Console.ReadKey(true);
@@ -43,7 +43,7 @@ public class Program {
       }
 
       // user have the decision to edit the order
-      (mode, order) = summary(order);
+      mode = Summary(order);
       if (mode == ModeCode.EDIT)
         continue;
       if (mode == ModeCode.CONTINUE)
@@ -51,13 +51,13 @@ public class Program {
     }
 
     Console.Clear();
-    order.displaySummary();
+    order.DisplaySummary();
     Console.WriteLine("\nOrder submitted!");
     Console.WriteLine("Thank you for your order!\n");
-    handleSaveOrder(order);
+    HandleSaveOrder(order);
   }
 
-  private static void handleSaveOrder(Order order) {
+  private static void HandleSaveOrder(Order order) {
     Console.Write("Save to file? y/yes or press any key to exit: ");
     string input = Console.ReadLine().ToLower();
     if (input == "y" || input == "yes") {
@@ -71,34 +71,34 @@ public class Program {
         Console.Write("File already exists. Enter another file name: ");
         file_name = Console.ReadLine();
       }
-      order.saveToFile(file_name);
+      order.SaveToFile(file_name);
     }
   }
 
-  private static (ModeCode, Order) edit(Order order) {
+  private static ModeCode Edit(Order order) {
     while (true) {
       Console.Clear();
-      displayTitle();
-      order.displayMenu();
+      DisplayTitle();
+      order.DisplayMenu();
 
       Console.WriteLine("");
-      order.calculateSubtotal();
-      order.displaySubtotal();
+      order.CalculateSubtotal();
+      order.DisplaySubtotal();
 
-      displayEditInstructions();
-      ModeCode mode = getEditInput(order);
+      DisplayEditInstructions();
+      ModeCode mode = GetEditInput(order);
       if (mode != ModeCode.NOTHING)
-        return (mode, order);
+        return mode;
     }
   } 
 
-  private static (ModeCode, Order) summary(Order order) {
+  private static ModeCode Summary(Order order) {
     while (true) {
-      order.calculateTax(_tax_rate);
-      order.displaySummary();
+      order.CalculateTax(_tax_rate);
+      order.DisplaySummary();
 
       Console.WriteLine("");
-      displaySummaryInstructions();
+      DisplaySummaryInstructions();
 
       ConsoleKeyInfo key = Console.ReadKey(true);
       switch (key.Key) {
@@ -107,20 +107,20 @@ public class Program {
         break;
 
       case ConsoleKey.E:
-        return (ModeCode.EDIT, order);
+        return ModeCode.EDIT;
 
       case ConsoleKey.Enter:
-        return (ModeCode.CONTINUE, order);
+        return ModeCode.CONTINUE;
 
       case ConsoleKey.C:
         Console.Write("Enter coupon code: ");
-        order.applyCoupon(Console.ReadLine(), _coupons);
+        order.ApplyCoupon(Console.ReadLine(), _coupons);
         break;
       }
     }
   }
 
-  private static void displayTitle() {
+  private static void DisplayTitle() {
     Console.Write("\nWelcome to the");
 
     Console.ForegroundColor = ConsoleColor.Blue;
@@ -130,7 +130,7 @@ public class Program {
     Console.WriteLine("digital ordering system!\n");
   } 
 
-  private static void displayEditInstructions() {
+  private static void DisplayEditInstructions() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
     Console.WriteLine("\n  ↓/j   (down)       ↑/k (up)" +
                       "\n  →/l   (add)        ←/h (remove)" +
@@ -138,34 +138,34 @@ public class Program {
     Console.ResetColor();
   }
 
-  private static void displaySummaryInstructions() {
+  private static void DisplaySummaryInstructions() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
     Console.WriteLine("e (edit)             c (apply coupon)" +
                       "\nenter (continue)     q (quit)\n");
     Console.ResetColor();
   }
 
-  private static ModeCode getEditInput(Order order) {
+  private static ModeCode GetEditInput(Order order) {
     ConsoleKeyInfo key = Console.ReadKey(true);
     switch (key.Key) {
     case ConsoleKey.DownArrow:
     case ConsoleKey.J:
-      order.moveDown();
+      order.MoveDown();
       break;
 
     case ConsoleKey.UpArrow:
     case ConsoleKey.K:
-      order.moveUp();
+      order.MoveUp();
       break;
 
     case ConsoleKey.RightArrow:
     case ConsoleKey.L:
-      order.addItem();
+      order.AddItem();
       break;
 
     case ConsoleKey.LeftArrow:
     case ConsoleKey.H:
-      order.removeItem();
+      order.RemoveItem();
       break;
 
     case ConsoleKey.Q:
