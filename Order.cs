@@ -58,10 +58,11 @@ public class Order {
     Console.WriteLine($"{"Item",-20}{"Price",-10}{"Qty",-10}");
     printSeparateLine();
     for (int i = 0; i < _items.Length; i++) {
-      if (_items[i].quantity > 0) {
-        Console.WriteLine(
-            $"{_items[i].name,-20}{_items[i].price,-10:C2}{_items[i].quantity,-10}");
-      }
+      if (_items[i].quantity <= 0)
+        continue;
+
+      Console.WriteLine(
+          $"{_items[i].name,-20}{_items[i].price,-10:C2}{_items[i].quantity,-10}");
     }
   }
 
@@ -132,7 +133,8 @@ public class Order {
       writer.WriteLine($"{"Item",-20}{"Price",-10}{"Qty",-10}");
       writer.WriteLine(new string('-', 40));
       for (int i = 0; i < _items.Length; i++) {
-        if (_items[i].quantity <= 0) continue;
+        if (_items[i].quantity <= 0)
+          continue;
 
         writer.WriteLine(
             $"{_items[i].name,-20}{_items[i].price,-10:C2}{_items[i].quantity,-10}");
