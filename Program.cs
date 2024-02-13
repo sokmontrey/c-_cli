@@ -6,14 +6,20 @@ namespace OrderSystem {
 /// Main entry point of the program
 /// </summary>
 public class Program {
-
   public static void Main(string[] args) {
     Order order = new Order(
         new Dictionary<string, float> {
           // menu
-          { "Burger", 5.99f },
-          { "Fries", 2.99f },
-          { "Drink", 1.99f },
+          { "Chicken braised with wine", 20.99f },
+          { "Beef stew cooked in red wine", 22.99f },
+          { "Traditional Provencal fish stew", 27.50f },
+          { "Savory tart filled with custard", 14.75f },
+          { "French salad", 9.99f },
+          { "Slow-cooked meat casserole", 24.50f },
+          { "Grilled steak with fries", 23.99f },
+          { "White wine Mussels", 18.99f },
+          { "Creamy custard with caramel", 9.99f },
+          { "Caramelized apple upside-down pastry", 11.99f },
         },
         0.13f, // 13% tax
         new Dictionary<string, float> {
@@ -34,7 +40,8 @@ public class Program {
         continue;
       }
 
-      // user can decision to edit the order
+      // true if user wants to continue
+      // false if user wants to edit the order
       if (order.Summary())
         break;
     }

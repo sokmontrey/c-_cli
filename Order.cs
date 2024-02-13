@@ -57,10 +57,11 @@ public class Order {
     while (true) {
       Console.Clear();
       DisplayManager.DisplayTitle();
+      DisplayManager.DisplayEditInstructions();
       DisplayManager.DisplayMenu(items, cursor_pos);
       CalculateSubtotal();
+      DisplayManager.PrintSeparateLine();
       DisplayManager.DisplaySubtotal(subtotal);
-      DisplayManager.DisplayEditInstructions();
 
       ModeCode mode = GetEditInput();
       switch (mode) {
@@ -114,6 +115,7 @@ public class Order {
     while (true) {
       CalculateTax(tax_rate);
       CalculateTotal();
+      Console.Clear();
       DisplayManager.DisplayOrderSummary(this);
       DisplayManager.DisplaySummaryInstructions();
 
@@ -203,22 +205,23 @@ public class Order {
   public void SaveToFile(string filename) {
     using (StreamWriter writer = new StreamWriter(filename + ".txt")) {
       writer.WriteLine("Your Order: \n");
-      writer.WriteLine($"{"Item",-20}{"Price",-10}{"Qty",-10}");
-      writer.WriteLine(new string('-', 40));
+      writer.WriteLine($"{"Item",-40}{"Price",-10}{"Qty",-10}");
+      writer.WriteLine(new string('-', 60));
+
       for (int i = 0; i < items.Length; i++) {
         if (items[i].quantity <= 0)
           continue;
-
         writer.WriteLine(
-            $"{items[i].name,-20}{items[i].price,-10:C2}{items[i].quantity,-10}");
+            $"{items[i].name,-40}{items[i].price,-10:C2}{items[i].quantity,-10}");
       }
-      writer.WriteLine(new string('-', 40));
-      writer.WriteLine($"{"Subtotal:",-20}{subtotal:C2}");
-      writer.WriteLine($"{"Tax:",-20}{tax:C2} ({tax_rate:P0})");
+
+      writer.WriteLine(new string('-', 60));
+      writer.WriteLine($"{"Subtotal:",-40}{subtotal:C2}");
+      writer.WriteLine($"{"Tax:",-40}{tax:C2} ({tax_rate:P0})");
       writer.WriteLine(
-          $"{"Discount:",-20}{discount:C2} (Coupon Code: {coupon})");
-      writer.WriteLine(new string('-', 40));
-      writer.WriteLine($"{"Total:",-20}{total:C2}");
+          $"{"Discount:",-40}{discount:C2} (Coupon Code: {coupon})");
+      writer.WriteLine(new string('-', 60));
+      writer.WriteLine($"{"Total:",-40}{total:C2}");
     }
 
     Console.WriteLine($"Order saved to {filename}.txt");
