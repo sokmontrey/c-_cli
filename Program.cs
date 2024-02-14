@@ -1,11 +1,24 @@
-﻿/// Author: Sokmontrey Sythat
-/// Student ID: 101477705
+﻿/**
+ * @author Sokmontrey Sythat / 101477705
+ */
 namespace OrderSystem {
 
-/// <summary>
-/// Main entry point of the program
-/// </summary>
 public class Program {
+  /** 
+   * @brief Main entry point of the program.
+   *  - Create an Order object with a menu of 10 items, 13% tax, and 3 available coupons
+   *  - Enter the main loop
+   *    - Enter Edit mode
+   *    - Go back to the start of the loop if order is empty
+   *    - Enter Summary mode
+   *    - Break the loop if user wants to continue
+   *    - Go back to the start of the loop if user wants to edit the order
+   *  - Submit the order (to nowhere at the moment)
+   *  - Display the order summary
+   *
+   * @param {string[]} args command-line arguments
+   * @return void
+  */
   public static void Main(string[] args) {
     Order order = new Order(
         new Dictionary<string, float> {
@@ -46,11 +59,13 @@ public class Program {
         break;
     }
 
+    // submit order (to nowhere at the moment)
     Console.Clear();
     order.CalculateTotal();
     DisplayManager.DisplayOrderSummary(order);
     Console.WriteLine("\nOrder submitted!");
     Console.WriteLine("Thank you for your purchases!\n");
+    // save order based on user's choice
     order.HandleSaveOrder();
   }
 

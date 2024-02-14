@@ -1,8 +1,17 @@
-/// Author: Sokmontrey Sythat
-/// Student ID: 101477705
+/**
+ * @author Sokmontrey Sythat / 101477705
+ */
 namespace OrderSystem {
 
+/**
+ * @brief A static with methods to display menu, order, summary, and etc.
+ */
 public class DisplayManager {
+  /**
+   * @brief Display the menu with a cursor to indicate the current selection.
+   * @param {Item[]} items the menu items with quantity data
+   * @param {int} cursor_pos the current cursor position
+   */
   public static void DisplayMenu(Item[] items, int cursor_pos) {
     Console.WriteLine($"{"Item",-42}{"Price",-10}{"Qty",-10}");
     PrintSeparateLine();
@@ -21,6 +30,10 @@ public class DisplayManager {
     }
   }
 
+  /**
+   * @brief Display only the items user has selected.
+   * @param {Item[]} items the menu items with quantity data
+   */
   public static void DisplayOrder(Item[] items) {
     Console.WriteLine($"{"Item",-40}{"Price",-10}{"Qty",-10}");
     PrintSeparateLine();
@@ -33,29 +46,54 @@ public class DisplayManager {
     }
   }
 
+  /**
+   * @brief Display the subtotal of the order.
+   * @param {float} subtotal the subtotal of the order
+   */
   public static void DisplaySubtotal(float subtotal) {
     Console.WriteLine($"{"Subtotal:",-40}{subtotal:C2}");
   }
 
+  /**
+   * @brief Display the tax and the tax rate.
+   * @param {float} tax the tax amount
+   * @param {float} tax_rate the tax rate
+   */
   public static void DisplayTax(float tax, float tax_rate) {
     Console.WriteLine($"{"Tax:",-40}{tax:C2} ({tax_rate:P0})");
   }
 
+  /**
+   * @brief Display the discount and the coupon code.
+   * @param {float} discount the discount amount
+   * @param {string} coupon the coupon code
+   */
   public static void DisplayDiscount(float discount, string coupon) {
     Console.WriteLine(
         $"{"Discount:",-40}{discount:C2} (Coupon Code: {coupon})");
   }
 
+  /**
+   * @brief Display the total of the order.
+   * @param {float} total the total of the order
+   */
   public static void DisplayTotal(float total) {
     Console.WriteLine($"{"Total:",-40}{total:C2}");
   }
 
+  /**
+   * @brief A method to print a separate line to separate sections.
+   */
   public static void PrintSeparateLine() {
     Console.ForegroundColor = ConsoleColor.DarkGray;
     Console.WriteLine(new string('-', 60));
     Console.ResetColor();
   }
 
+  /**
+   * @brief Display the user order, subtotal, tax, discount, and total.
+   * @param {Order} order the order object
+   */
   public static void DisplayOrderSummary(Order order) {
     Console.WriteLine("Your Order: \n");
     DisplayOrder(order.items);
@@ -64,7 +102,7 @@ public class DisplayManager {
 
     DisplaySubtotal(order.subtotal);
     DisplayTax(order.tax, order.tax_rate);
-    DisplayDiscount(order.discount, order.coupon);
+    DisplayDiscount(order.discount, order.current_coupon);
 
     PrintSeparateLine();
 
@@ -73,6 +111,9 @@ public class DisplayManager {
     Console.ResetColor();
   }
 
+  /**
+   * @brief Display the title of the program.
+   */
   public static void DisplayTitle() {
     Console.Write("\nWelcome to the");
 
@@ -83,6 +124,9 @@ public class DisplayManager {
     Console.WriteLine("digital ordering system!\n");
   }
 
+  /**
+   * @brief Display the instructions for Edit mode.
+   */
   public static void DisplayEditInstructions() {
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("Instructions:");
@@ -93,6 +137,9 @@ public class DisplayManager {
     Console.ResetColor();
   }
 
+  /**
+   * @brief Display the instructions for Summary mode.
+   */
   public static void DisplaySummaryInstructions() {
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("\nInstructions:");
