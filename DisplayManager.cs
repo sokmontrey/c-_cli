@@ -47,6 +47,15 @@ public class DisplayManager {
   }
 
   /**
+   * @brief Display the order is empty message.
+   */
+  public static void DisplayOrderIsEmpty() {
+    Console.WriteLine("Order is empty. Please add items to the order.");
+    Console.Write("Press any key to continue...");
+    Console.ReadKey(true);
+  }
+
+  /**
    * @brief Display the subtotal of the order.
    * @param {float} subtotal the subtotal of the order
    */

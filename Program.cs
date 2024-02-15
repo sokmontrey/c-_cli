@@ -47,21 +47,18 @@ public class Program {
 
       // user can't continue with an empty order
       if (order.subtotal == 0) {
-        Console.WriteLine("Order is empty. Please add items to the order.");
-        Console.Write("Press any key to continue...");
-        Console.ReadKey(true);
+        DisplayManager.DisplayOrderIsEmpty();
         continue;
       }
 
-      // true if user wants to continue
-      // false if user wants to edit the order
-      if (order.Summary())
+      bool is_summary = order.Summary();
+      if (is_summary)
         break;
     }
 
     // submit order (to nowhere at the moment)
-    Console.Clear();
     order.CalculateTotal();
+    Console.Clear();
     DisplayManager.DisplayOrderSummary(order);
     Console.WriteLine("\nOrder submitted!");
     Console.WriteLine("Thank you for your purchases!\n");
