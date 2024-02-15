@@ -24,6 +24,7 @@ public enum ModeCode {
   INCREMENT_ITEM,
   DECREMENT_ITEM,
   APPLY_COUPON,
+  EXIT,
 }
 
 /**
@@ -49,12 +50,37 @@ public class Order {
   // Current cursor position in the menu CLI.
   private int cursor_pos;
 
-  /** 
+  /**
+   * @brief map ConsoleKey to ModeCode for user input handling. More scalable than using a switch statement.
+   */
+  public Dictionary<ConsoleKey, ModeCode> key_mode_map =
+      new Dictionary<ConsoleKey, ModeCode> {
+        { ConsoleKey.UpArrow, ModeCode.CURSOR_UP },
+        { ConsoleKey.K, ModeCode.CURSOR_UP },
+
+        { ConsoleKey.DownArrow, ModeCode.CURSOR_DOWN },
+        { ConsoleKey.J, ModeCode.CURSOR_DOWN },
+
+        { ConsoleKey.LeftArrow, ModeCode.DECREMENT_ITEM },
+        { ConsoleKey.H, ModeCode.DECREMENT_ITEM },
+
+        { ConsoleKey.RightArrow, ModeCode.INCREMENT_ITEM },
+        { ConsoleKey.L, ModeCode.INCREMENT_ITEM },
+
+        { ConsoleKey.Q, ModeCode.EXIT },
+        { ConsoleKey.Enter, ModeCode.CONTINUE },
+        { ConsoleKey.E, ModeCode.EDIT },
+        { ConsoleKey.C, ModeCode.APPLY_COUPON },
+      };
+
+  /**
    * @constructor
-   * @brief Initializes a new array of Items with name, price, and quantity data.
+   * @brief Initializes a new array of Items with name, price, and quantity
+   * data.
    * @param {Dictionary<string, float>} menu name and price of the item
    * @param {float} tax_rate Tax rate in decimal form (0.13 for 13%)
-   * @param {Dictionary<string, float>} coupons Dictionary of coupon code and its discount rate
+   * @param {Dictionary<string, float>} coupons Dictionary of coupon code and
+   * its discount rate
    */
   public Order(Dictionary<string, float> menu, float tax_rate,
                Dictionary<string, float> coupons) {
@@ -74,7 +100,8 @@ public class Order {
    * @brief Main loop for Editing the order.
    *  - clear the console
    *  - display the title, instructions, menu, and subtotal
-   *  - get user input and handle the input (add/remove items, move up/down the cursor)
+   *  - get user input and handle the input (add/remove items, move up/down the
+   * cursor)
    *  - repeat until user wants to continue
    * @return void
    */
@@ -88,10 +115,11 @@ public class Order {
       DisplayManager.PrintSeparateLine();
       DisplayManager.DisplaySubtotal(subtotal);
 
-      ModeCode mode = GetEditInput();
+      ModeCode mode = WaitForInput();
       switch (mode) {
-      case ModeCode.NOTHING:
-        continue;
+      case ModeCode.EXIT:
+        Environment.Exit(0);
+        break;
       case ModeCode.CONTINUE:
         // break out of the loop by returning from the directly
         return;
@@ -129,7 +157,7 @@ public class Order {
       DisplayManager.DisplayOrderSummary(this);
       DisplayManager.DisplaySummaryInstructions();
 
-      ModeCode mode = GetSummaryInput();
+      ModeCode mode = WaitForInput();
       switch (mode) {
       case ModeCode.EDIT:
         return false;
@@ -144,69 +172,27 @@ public class Order {
   }
 
   /**
-   * @brief Handle user input and return ModeCode for the Edit method. 
-   *    Exit the program directly if the user presses 'q'.
+   * @brief Wait for user input and return a corresponding ModeCode
    * @return {ModeCode} representing user command.
    */
-  private ModeCode GetEditInput() {
+  private ModeCode WaitForInput() {
     ConsoleKeyInfo key = Console.ReadKey(true);
-    switch (key.Key) {
-    case ConsoleKey.UpArrow:
-    case ConsoleKey.K:
-      return ModeCode.CURSOR_UP;
-    case ConsoleKey.DownArrow:
-    case ConsoleKey.J:
-      return ModeCode.CURSOR_DOWN;
-
-    case ConsoleKey.LeftArrow:
-    case ConsoleKey.H:
-      return ModeCode.DECREMENT_ITEM;
-    case ConsoleKey.RightArrow:
-    case ConsoleKey.L:
-      return ModeCode.INCREMENT_ITEM;
-
-    case ConsoleKey.Q:
-      Environment.Exit(0);
-      break;
-    case ConsoleKey.Enter:
-      return ModeCode.CONTINUE;
-    }
-    return ModeCode.NOTHING;
+    return key_mode_map.ContainsKey(key.Key) ? key_mode_map[key.Key]
+                                             : ModeCode.NOTHING;
   }
 
   /**
-   * @brief Handle user input and return ModeCode for the Summary method. 
-   *    Exit the program directly if the user presses 'q'.
-   * @return {ModeCode} representing user command.
-   */
-  private ModeCode GetSummaryInput() {
-    ConsoleKeyInfo key = Console.ReadKey(true);
-    switch (key.Key) {
-    case ConsoleKey.Q:
-      Environment.Exit(0);
-      break;
-    case ConsoleKey.E:
-      return ModeCode.EDIT;
-    case ConsoleKey.Enter:
-      return ModeCode.CONTINUE;
-    case ConsoleKey.C:
-      return ModeCode.APPLY_COUPON;
-    }
-    return ModeCode.NOTHING;
-  }
-
-  /**
-   * @brief Move the cursor down in the menu CLI by incrementing the cursor position
-   *  (0 is at the top). Reset the cursor position to the end of the menu if
-   *  it reaches the top.
+   * @brief Move the cursor down in the menu CLI by incrementing the cursor
+   * position (0 is at the top). Reset the cursor position to the end of the
+   * menu if it reaches the top.
    * @return void
    */
   public void MoveDown() { cursor_pos = (cursor_pos + 1) % items.Length; }
 
   /**
-   * @brief Move the cursor up in the menu CLI by decrementing the cursor position
-   *  (0 is at the top). Reset the cursor position to the end of the menu if
-   *  it reaches the top.
+   * @brief Move the cursor up in the menu CLI by decrementing the cursor
+   * position (0 is at the top). Reset the cursor position to the end of the
+   * menu if it reaches the top.
    * @return void
    */
   public void MoveUp() {
@@ -214,26 +200,27 @@ public class Order {
   }
 
   /**
-   * @brief Add an item to the order by incrementing the quantity of the item at the
-   *  cursor position.
+   * @brief Add an item to the order by incrementing the quantity of the item at
+   * the cursor position.
    * @return void
    */
   public void AddItem() { items[cursor_pos].quantity++; }
 
   /**
-   * @brief Remove an item from the order by decrementing the quantity of the item
-   * at the cursor position. Can't remove an item if the quantity is already 0.
+   * @brief Remove an item from the order by decrementing the quantity of the
+   * item at the cursor position. Can't remove an item if the quantity is
+   * already 0.
    * @return void
    */
   public void RemoveItem() {
-    if (items[cursor_pos].quantity > 0) {
+    if (items[cursor_pos].quantity > 0)
       items[cursor_pos].quantity--;
-    }
+    // items[cursor_pos].quantity -= items[cursor_pos].quantity > 0 ? 1 : 0;
   }
 
   /**
-   * @brief Apply a coupon to the order by setting the discount based on the coupon
-   *  code.
+   * @brief Apply a coupon to the order by setting the discount based on the
+   * coupon code.
    *    - Update current_coupon state
    *    - Check if the coupon code is available
    *    - Update the discount based on the coupon code
@@ -249,9 +236,8 @@ public class Order {
   }
 
   /**
-   * @brief Calculate subtotal by sum up all the items' price multiplied by their
-   *  quantity.
-   *  Update subtotal state then return it (for immediate use).
+   * @brief Calculate subtotal by sum up all the items' price multiplied by
+   * their quantity. Update subtotal state then return it (for immediate use).
    * @return {float} subtotal
    */
   public float CalculateSubtotal() {
@@ -269,8 +255,8 @@ public class Order {
   public float CalculateTax() { return tax = subtotal * tax_rate; }
 
   /**
-   * @brief Calculate total by adding tax and subtracting discount from subtotal.
-   *  Update total state then return it (for immediate use).
+   * @brief Calculate total by adding tax and subtracting discount from
+   * subtotal. Update total state then return it (for immediate use).
    * @return {float} total
    */
   public float CalculateTotal() { return total = subtotal + tax - discount; }
