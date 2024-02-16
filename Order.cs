@@ -53,7 +53,7 @@ public class Order {
   /**
    * @brief map ConsoleKey to ModeCode for user input handling. More scalable than using a switch statement.
    */
-  public Dictionary<ConsoleKey, ModeCode> key_mode_map =
+  public static Dictionary<ConsoleKey, ModeCode> key_mode_map =
       new Dictionary<ConsoleKey, ModeCode> {
         { ConsoleKey.UpArrow, ModeCode.CURSOR_UP },
         { ConsoleKey.K, ModeCode.CURSOR_UP },
