@@ -87,4 +87,5 @@ I do not want to overuse Dictionary, so I use if else statement to convert the u
 > - All Variable names are in `snake_case`
 > - All Method names are in `PascalCase`
 > - All Constants are in `ALL_CAPITAL_LETTERS`
-> - State variables such as quantity and cursor_position are pass by reference to be updated
+> - State variables such as quantity and cursor_position are pass by reference to be updated 
+> - I accidentally create this program with OOP practices which can be found here: https://github.com/sokmontrey/csharp_cashier_cli_app. The program is later re-written by following further class anouncement.
