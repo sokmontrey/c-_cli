@@ -4,7 +4,7 @@
 namespace OrderSystem {
 
 public class Program {
-  public static string[] menu =
+  public static string[] MENU =
       new string[10] { "Chicken braised with wine",
                        "Beef stew cooked in red wine",
                        "Traditional Provencal fish stew",
@@ -16,13 +16,13 @@ public class Program {
                        "Creamy custard with caramel",
                        "Caramelized apple upside-down pastry" };
 
-  public static float[] price =
+  public static float[] PRICE =
       new float[10] { 20.99f, 22.99f, 27.50f, 14.75f, 9.99f,
                       24.50f, 23.99f, 18.99f, 9.99f,  11.99f };
 
-  public static float tax_rate = 0.13f;
+  public static float TAX_RATE = 0.13f;
 
-  public static Dictionary<string, float> coupons =
+  public static Dictionary<string, float> COUPONS =
       new Dictionary<string, float> {
         { "10OFF", 0.10f },
         { "20OFF", 0.20f },
@@ -114,9 +114,9 @@ public class Program {
       } else if (mode == DECREMENT_ITEM && quantity[cursor_position] > 0) {
         quantity[cursor_position]--;
       } else if (mode == CURSOR_UP) {
-        cursor_position = (cursor_position - 1 + menu.Length) % menu.Length;
+        cursor_position = (cursor_position - 1 + MENU.Length) % MENU.Length;
       } else if (mode == CURSOR_DOWN) {
-        cursor_position = (cursor_position + 1) % menu.Length;
+        cursor_position = (cursor_position + 1) % MENU.Length;
       }
     }
   }
@@ -127,9 +127,10 @@ public class Program {
    *  - display the order, subtotal, tax, discount, total, and instructions
    *  - get user input and handle the input (continue, edit, apply coupon)
    *  - repeat until user wants to edit or continue
+   * Use ref and out parameters to avoid returning a tuple
    * return bool
-   *  true if user wants to continue with the order
-   *  false if user wants to edit the order
+   *    true if user wants to continue with the order
+   *    false if user wants to edit the order
    */
   public static bool Summary(int[] quantity, float subtotal, ref float discount,
                              ref string coupon_code, out float tax,
@@ -167,8 +168,8 @@ public class Program {
    *    - Set discount to 0 otherwise.
    */
   public static float GetCouponDiscount(string coupon_code, float subtotal) {
-    if (coupons.ContainsKey(coupon_code))
-      return subtotal * coupons[coupon_code];
+    if (COUPONS.ContainsKey(coupon_code))
+      return subtotal * COUPONS[coupon_code];
     return 0;
   }
 
@@ -177,7 +178,7 @@ public class Program {
    *  Update tax state then return it (for immediate use).
    */
   public static float CalculateTax(float subtotal) {
-    return subtotal * tax_rate;
+    return subtotal * TAX_RATE;
   }
 
   /**
@@ -226,8 +227,8 @@ public class Program {
    */
   public static float CalculateSubtotal(int[] quantity) {
     float subtotal = 0;
-    for (int i = 0; i < price.Length; i++) {
-      subtotal += price[i] * quantity[i];
+    for (int i = 0; i < PRICE.Length; i++) {
+      subtotal += PRICE[i] * quantity[i];
     }
     return subtotal;
   }
@@ -239,7 +240,7 @@ public class Program {
     Console.WriteLine($"{"Item",-42}{"Price",-10}{"Qty",-10}");
     PrintSeparateLine();
 
-    for (int i = 0; i < menu.Length; i++) {
+    for (int i = 0; i < MENU.Length; i++) {
       if (i == cursor_pos) {
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write("> ");
@@ -247,7 +248,7 @@ public class Program {
         Console.Write("  ");
       }
 
-      Console.WriteLine($"{menu[i],-40}{price[i],-10:C2}{quantity[i],-10}");
+      Console.WriteLine($"{MENU[i],-40}{PRICE[i],-10:C2}{quantity[i],-10}");
       Console.ResetColor();
     }
   }
@@ -299,7 +300,7 @@ public class Program {
     PrintSeparateLine();
 
     DisplaySubtotal(subtotal);
-    Console.WriteLine($"{"Tax:",-40}{tax:C2} ({tax_rate:P0})");
+    Console.WriteLine($"{"Tax:",-40}{tax:C2} ({TAX_RATE:P0})");
     Console.WriteLine(
         $"{"Discount:",-40}{discount:C2} (Coupon Code: {coupon_code})");
 
@@ -331,7 +332,7 @@ public class Program {
     for (int i = 0; i < quantity.Length; i++) {
       if (quantity[i] <= 0)
         continue;
-      Console.WriteLine($"{menu[i],-40}{price[i],-10:C2}{quantity[i],-10}");
+      Console.WriteLine($"{MENU[i],-40}{PRICE[i],-10:C2}{quantity[i],-10}");
     }
   }
 
@@ -395,15 +396,15 @@ public class Program {
       writer.WriteLine($"{"Item",-40}{"Price",-10}{"Qty",-10}");
       writer.WriteLine(new string('-', 60));
 
-      for (int i = 0; i < menu.Length; i++) {
+      for (int i = 0; i < MENU.Length; i++) {
         if (quantity[i] <= 0)
           continue;
-        writer.WriteLine($"{menu[i],-40}{price[i],-10:C2}{quantity[i],-10}");
+        writer.WriteLine($"{MENU[i],-40}{PRICE[i],-10:C2}{quantity[i],-10}");
       }
 
       writer.WriteLine(new string('-', 60));
       writer.WriteLine($"{"Subtotal:",-40}{subtotal:C2}");
-      writer.WriteLine($"{"Tax:",-40}{tax:C2} ({tax_rate:P0})");
+      writer.WriteLine($"{"Tax:",-40}{tax:C2} ({TAX_RATE:P0})");
       writer.WriteLine(
           $"{"Discount:",-40}{discount:C2} (Coupon Code: {coupon_code})");
       writer.WriteLine(new string('-', 60));
