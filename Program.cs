@@ -110,12 +110,18 @@ public class Program {
         // break out of the loop by returning from the directly
         return subtotal;
       } else if (mode == INCREMENT_ITEM) {
+        // increment the quantity of the item at the cursor position
         quantity[cursor_position]++;
       } else if (mode == DECREMENT_ITEM && quantity[cursor_position] > 0) {
+        // decrement the quantity of the item at the cursor position
+        // only if the quantity is greater than 0
         quantity[cursor_position]--;
       } else if (mode == CURSOR_UP) {
+        // move the cursor up (zero is at the top)
+        // use modulo to wrap around the cursor position
         cursor_position = (cursor_position - 1 + MENU.Length) % MENU.Length;
       } else if (mode == CURSOR_DOWN) {
+        // move the cursor down (zero is at the top)
         cursor_position = (cursor_position + 1) % MENU.Length;
       }
     }
@@ -162,10 +168,9 @@ public class Program {
   /**
    * Apply a coupon to the order by setting the discount based on the
    * coupon code.
-   *    - Update current_coupon state
    *    - Check if the coupon code is available
-   *    - Update the discount based on the coupon code
-   *    - Set discount to 0 otherwise.
+   *    - return corresponding discount if available
+   *    - return 0 otherwise.
    */
   public static float GetCouponDiscount(string coupon_code, float subtotal) {
     if (COUPONS.ContainsKey(coupon_code))
@@ -175,7 +180,6 @@ public class Program {
 
   /**
    * Calculate total tax based on tax rate and subtotal.
-   *  Update tax state then return it (for immediate use).
    */
   public static float CalculateTax(float subtotal) {
     return subtotal * TAX_RATE;
@@ -223,7 +227,7 @@ public class Program {
 
   /**
    * Calculate subtotal by sum up all the items' price multiplied by
-   * their quantity. Update subtotal state then return it (for immediate use).
+   * their quantity.
    */
   public static float CalculateSubtotal(int[] quantity) {
     float subtotal = 0;
